@@ -31,20 +31,20 @@ A lightweight, portable DNS management tool similar to DNS Jumper. No installati
 │  Current DNS Status                                          │
 │  ┌────────────────────────────────────────────────────────┐  │
 │  │ Ethernet:                                              │  │
-│  │   IPv4: 1.1.1.1, 1.0.0.1                              │  │
-│  │   IPv6: 2606:4700:4700::1111                          │  │
+│  │   IPv4: 1.1.1.1, 1.0.0.1                               │  │
+│  │   IPv6: 2606:4700:4700::1111                           │  │
 │  └────────────────────────────────────────────────────────┘  │
 │                                                              │
 │  Select DNS Provider                                         │
-│  [Cloudflare    ▾]  ☑ Also set IPv6 DNS                     │
+│  [Cloudflare     ▾  ]     Also set IPv6 DNS                  │
 │                                                              │
-│  [Apply DNS] [Reset to DHCP] [Ping Test] [Benchmark All]    │
+│  [Apply DNS] [Reset to DHCP] [Ping Test] [Benchmark All]     |
 ├──────────────────────────────────────────────────────────────┤
-│  [Flush DNS Cache] [Network Settings] [Speed Test]          │
+│  [Flush DNS Cache] [Network Settings] [Speed Test]           │
 ├──────────────────────────────────────────────────────────────┤
 │  Log                                                         │
-│  [10:30:25] DNS JoinV started                               │
-│  [10:30:30] Applied Cloudflare DNS successfully!            │
+│  [10:30:25] DNS JoinV started                                │
+│  [10:30:30] Applied Cloudflare DNS successfully!             │
 └──────────────────────────────────────────────────────────────┘
 ```
 
