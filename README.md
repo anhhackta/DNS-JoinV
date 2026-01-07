@@ -1,9 +1,15 @@
 # DNS JoinV
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge&logo=windows" alt="Platform">
-  <img src="https://img.shields.io/badge/PowerShell-5.1+-blue?style=for-the-badge&logo=powershell" alt="PowerShell">
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
+  <a href="https://www.microsoft.com/windows">
+    <img src="https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge&logo=windows" alt="Platform">
+  </a>
+  <a href="https://learn.microsoft.com/en-us/powershell/">
+    <img src="https://img.shields.io/badge/PowerShell-5.1+-blue?style=for-the-badge&logo=powershell" alt="PowerShell">
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
+  </a>
 </p>
 
 > 🌐 **Simple DNS Management Tool for Windows** - Change DNS with one click!
