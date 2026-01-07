@@ -7,7 +7,7 @@
   <a href="https://learn.microsoft.com/en-us/powershell/">
     <img src="https://img.shields.io/badge/PowerShell-5.1+-blue?style=for-the-badge&logo=powershell" alt="PowerShell">
   </a>
-  <a href="https://opensource.org/licenses/MIT](https://github.com/anhhackta/DNS-JoinV?tab=MIT-1-ov-file#">
+  <a href="https://github.com/anhhackta/DNS-JoinV?tab=MIT-1-ov-file#">
     <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
   </a>
 </p>
