@@ -133,13 +133,25 @@ $script:DNSPresets = [ordered]@{
         IPv4 = @("9.9.9.10", "149.112.112.10")
         IPv6 = @("2620:fe::10", "2620:fe::fe:10")
     }
+    "Verisign" = @{
+        IPv4 = @("64.6.64.6", "64.6.65.6")
+        IPv6 = @("2620:74:1b::1:1", "2620:74:1c::2:2")
+    }
     "Orange DNS" = @{
-        IPv4 = @("80.10.246.2", "80.10.246.129")
+        IPv4 = @("195.92.195.94", "195.92.195.95")
         IPv6 = @($null, $null)
     }
     "Norton DNS" = @{
-        IPv4 = @("199.85.126.10", "199.85.127.10")
+        IPv4 = @("198.153.192.1", "198.153.194.1")
         IPv6 = @($null, $null)
+    }
+    "Next DNS" = @{
+        IPv4 = @("45.90.28.217", "45.90.30.217")
+        IPv6 = @($null, $null)
+    }
+    "Control D" = @{
+        IPv4 = @("76.76.2.2", "76.76.10.2")
+        IPv6 = @("2606:1a40::2", "2606:1a40:1::2")
     }
 }
 
@@ -194,6 +206,23 @@ $form.FormBorderStyle = "FixedSingle"
 $form.MaximizeBox = $false
 $form.BackColor = [System.Drawing.Color]::FromArgb(28, 28, 32)
 $form.Font = New-Object System.Drawing.Font("Segoe UI", 9)
+
+# Set Form Icon (using system icon)
+try {
+    $iconPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("System"), "imageres.dll")
+    Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+public class IconExtractor {
+    [DllImport("shell32.dll", CharSet = CharSet.Auto)]
+    public static extern IntPtr ExtractIcon(IntPtr hInst, string lpszExeFileName, int nIconIndex);
+}
+"@
+    $iconHandle = [IconExtractor]::ExtractIcon([IntPtr]::Zero, $iconPath, 16)
+    if ($iconHandle -ne [IntPtr]::Zero) {
+        $form.Icon = [System.Drawing.Icon]::FromHandle($iconHandle)
+    }
+} catch { }
 
 # Colors
 $accent = [System.Drawing.Color]::FromArgb(0, 180, 120)

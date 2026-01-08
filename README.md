@@ -28,43 +28,23 @@ A lightweight, portable DNS management tool similar to DNS Jumper. No installati
 | 🌐 **Multi-language** | English and Vietnamese (Tieng Viet) |
 | 📦 **Portable** | Single file, no installation needed |
 
-## 🖥️ Screenshot
-
-```
-┌──────────────────────────────────────────────────────────────┐
-│  DNS JoinV                              [Language: English]  │
-├──────────────────────────────────────────────────────────────┤
-│  Current DNS Status                                          │
-│  ┌────────────────────────────────────────────────────────┐  │
-│  │ Ethernet:                                              │  │
-│  │   IPv4: 1.1.1.1, 1.0.0.1                               │  │
-│  │   IPv6: 2606:4700:4700::1111                           │  │
-│  └────────────────────────────────────────────────────────┘  │
-│                                                              │
-│  Select DNS Provider                                         │
-│  [Cloudflare     ▾  ]     Also set IPv6 DNS                  │
-│                                                              │
-│  [Apply DNS] [Reset to DHCP] [Ping Test] [Benchmark All]     |
-├──────────────────────────────────────────────────────────────┤
-│  [Flush DNS Cache] [Network Settings] [Speed Test]           │
-├──────────────────────────────────────────────────────────────┤
-│  Log                                                         │
-│  [10:30:25] DNS JoinV started                                │
-│  [10:30:30] Applied Cloudflare DNS successfully!             │
-└──────────────────────────────────────────────────────────────┘
-```
-
 ## 📥 Installation
 
-### Option 1: Download and Run
+### Option 1: One-liner (PowerShell) - Recommended ⚡
+Open PowerShell **as Administrator** and run:
+```powershell
+irm https://anhhackta.github.io/DNS-JoinV/DNS-JoinV.cmd | iex
+```
+
+Or download and run:
+```powershell
+irm https://anhhackta.github.io/DNS-JoinV/DNS-JoinV.cmd -OutFile DNS-JoinV.cmd; .\DNS-JoinV.cmd
+```
+
+### Option 2: Download and Run
 1. Download `DNS-JoinV.cmd` from [Releases](https://github.com/anhhackta/DNS-JoinV/releases)
 2. Double-click to run
 3. Click "Yes" when prompted for Administrator privileges
-
-### Option 2: One-liner (PowerShell)
-```powershell
-irm https://raw.githubusercontent.com/anhhackta/DNS-JoinV/main/DNS-JoinV.cmd -OutFile DNS-JoinV.cmd; .\DNS-JoinV.cmd
-```
 
 ## 🎯 Supported DNS Providers
 
@@ -76,8 +56,11 @@ irm https://raw.githubusercontent.com/anhhackta/DNS-JoinV/main/DNS-JoinV.cmd -Ou
 | **AdGuard DNS** | 94.140.14.14 | 94.140.15.15 | ✅ |
 | **Quad9** | 9.9.9.9 | 149.112.112.112 | ✅ |
 | **Quad9 No Security** | 9.9.9.10 | 149.112.112.10 | ✅ |
-| **Orange DNS** | 80.10.246.2 | 80.10.246.129 | ❌ |
-| **Norton DNS** | 199.85.126.10 | 199.85.127.10 | ❌ |
+| **Verisign** | 64.6.64.6 | 64.6.65.6 | ✅ |
+| **Orange DNS** | 195.92.195.94 | 195.92.195.95 | ❌ |
+| **Norton DNS** | 198.153.192.1 | 198.153.194.1 | ❌ |
+| **Next DNS** | 45.90.28.217 | 45.90.30.217 | ❌ |
+| **Control D** | 76.76.2.2 | 76.76.10.2 | ✅ |
 
 ## 📖 Usage
 
