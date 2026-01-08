@@ -33,7 +33,7 @@ A lightweight, portable DNS management tool similar to DNS Jumper. No installati
 ### Option 1: One-liner (PowerShell) - Recommended ⚡
 Open PowerShell **as Administrator** and run:
 ```powershell
-irm https://anhhackta.github.io/DNS-JoinV/DNS-JoinV.cmd | iex
+irm https://anhhackta.github.io/DNS-JoinV/install.ps1 | iex
 ```
 
 Or download and run:
