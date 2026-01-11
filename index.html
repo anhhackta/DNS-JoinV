@@ -9,6 +9,7 @@
     <meta name="keywords" content="DNS, DNS Changer, DNS Manager, Windows, Cloudflare, Google DNS, OpenDNS, AdGuard">
     <meta name="author" content="@anhhackta">
     <title>DNS JoinV - Simple DNS Management Tool</title>
+    <link rel="icon" type="image/svg+xml" href="dns_joinv_logo.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -498,14 +499,21 @@
                 <p>Switch between DNS providers with a single click. No complex configuration needed.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon">🌍</div>
+                <div class="feature-icon">🌐</div>
                 <h3>IPv4 + IPv6</h3>
                 <p>Full support for both IPv4 and IPv6 DNS addresses for modern internet.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">📊</div>
                 <h3>DNS Benchmark</h3>
-                <p>Test and compare ping times for all DNS providers to find the fastest one.</p>
+                <p>Test and compare all DNS providers to find the fastest one. Supports both ICMP Ping and DNS Latency
+                    modes.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⏱️</div>
+                <h3>ICMP Ping vs DNS Latency</h3>
+                <p><strong>ICMP Ping:</strong> Measures network round-trip time. <strong>DNS Latency:</strong> Measures
+                    actual DNS query time (more accurate for DNS performance).</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">🚀</div>
@@ -517,12 +525,36 @@
                 <h3>Flush DNS Cache</h3>
                 <p>Clear your DNS cache instantly when you encounter connection issues.</p>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">🌐</div>
-                <h3>Multi-language</h3>
-                <p>Available in English and Vietnamese (Tieng Viet).</p>
+        </div>
+    </section>
+
+    <!-- ICMP vs DNS Latency Explanation -->
+    <section class="features" id="benchmark-modes" style="padding-top: 40px;">
+        <div class="section-title">
+            <h2>Benchmark Modes Explained</h2>
+            <p>Choose the right testing method for your needs</p>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 900px; margin: 0 auto;">
+            <div class="feature-card" style="border-left: 4px solid #00b878;">
+                <h3 style="color: #00b878;">📡 ICMP Ping</h3>
+                <p><strong>What it measures:</strong> Network round-trip time (RTT) - how fast packets travel to the DNS
+                    server and back.</p>
+                <p style="margin-top: 10px;"><strong>Best for:</strong> General network latency testing, checking if a
+                    server is reachable.</p>
+                <p style="margin-top: 10px; color: var(--text-muted);"><em>⚡ Faster to run, but doesn't measure actual
+                        DNS resolution speed.</em></p>
+            </div>
+            <div class="feature-card" style="border-left: 4px solid #0096ff;">
+                <h3 style="color: #0096ff;">🔍 DNS Latency</h3>
+                <p><strong>What it measures:</strong> Actual time to resolve a domain name through the DNS server.</p>
+                <p style="margin-top: 10px;"><strong>Best for:</strong> Real-world DNS performance testing, finding the
+                    fastest DNS for browsing.</p>
+                <p style="margin-top: 10px; color: var(--text-muted);"><em>📊 More accurate for DNS performance, but
+                        slightly slower to test.</em></p>
             </div>
         </div>
+        <p style="text-align: center; margin-top: 30px; color: var(--text-muted);">💡 <strong>Recommendation:</strong>
+            Use DNS Latency mode for the most accurate results when choosing a DNS provider.</p>
     </section>
 
     <section class="providers" id="providers">
