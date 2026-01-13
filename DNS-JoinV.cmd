@@ -25,11 +25,11 @@ Add-Type -AssemblyName System.Drawing
 #region Language & Settings
 $script:Lang = @{
     EN = @{
-        Title = "DNS JoinV"; Admin = "[Administrator]"; CurrentStatus = "Current DNS Status"
+        Admin = "[Administrator]"; CurrentStatus = "Current DNS Status"
         NetworkAdapter = "Network Adapter:"; Refresh = "Refresh"; SelectDNS = "Select DNS Provider"
-        AlsoIPv6 = "IPv6"; ApplyDNS = "Apply DNS"; ResetDHCP = "Reset DHCP"
-        BenchmarkAll = "Benchmark"; FlushCache = "Flush DNS"; NetworkSettings = "Network"
-        CheckPing = "Check Ping"; SpeedTest = "Speed Test"; Log = "Log"; Clear = "Clear"; Author = "@anhhackta"
+        ApplyDNS = "Apply DNS"; ResetDHCP = "Reset DHCP"; Benchmark = "Benchmark"
+        FlushCache = "Flush DNS"; NetworkSettings = "Network"
+        CheckPing = "Check Ping"; SpeedTest = "Speed Test"; Log = "Log"; Clear = "Clear"
         LogStarted = "DNS JoinV started"; LogRefreshed = "Refreshed adapter list"
         LogApplying = "Applying DNS..."; LogIPv4Set = "IPv4 DNS set"; LogIPv6Set = "IPv6 DNS set"
         LogDone = "DNS applied!"; LogReset = "Resetting to DHCP..."; LogResetOK = "Reset to DHCP"
@@ -39,11 +39,11 @@ $script:Lang = @{
         NoAdapter = "No adapter"; Internet = "Internet"; NoInternet = "No Internet"
     }
     VI = @{
-        Title = "DNS JoinV"; Admin = "[Quan Tri]"; CurrentStatus = "Trang Thai DNS"
+        Admin = "[Admin]"; CurrentStatus = "Trang Thai DNS"
         NetworkAdapter = "Card Mang:"; Refresh = "Lam Moi"; SelectDNS = "Chon DNS"
-        AlsoIPv6 = "IPv6"; ApplyDNS = "Ap Dung"; ResetDHCP = "DHCP"
-        BenchmarkAll = "Danh Gia"; FlushCache = "Xoa Cache"; NetworkSettings = "Mang"
-        CheckPing = "Kiem Tra Ping"; SpeedTest = "Toc Do"; Log = "Nhat Ky"; Clear = "Xoa"; Author = "@anhhackta"
+        ApplyDNS = "Ap Dung"; ResetDHCP = "DHCP"; Benchmark = "Benchmark"
+        FlushCache = "Xoa Cache"; NetworkSettings = "Mang"
+        CheckPing = "Kiem Tra Ping"; SpeedTest = "Toc Do"; Log = "Nhat Ky"; Clear = "Xoa"
         LogStarted = "Da khoi dong"; LogRefreshed = "Da lam moi"; LogApplying = "Dang ap dung..."
         LogIPv4Set = "Da set IPv4"; LogIPv6Set = "Da set IPv6"; LogDone = "Thanh cong!"
         LogReset = "Dang reset..."; LogResetOK = "Da reset"; LogPinging = "Dang ping"
@@ -182,7 +182,7 @@ $lblTitle.AutoSize = $true
 $form.Controls.Add($lblTitle)
 
 $lblAdmin = New-Object Windows.Forms.Label
-$lblAdmin.Text = "[Admin]"
+$lblAdmin.Text = ""  # Set by UpdateLang
 $lblAdmin.ForeColor = [Drawing.Color]::FromArgb(100,180,100)
 $lblAdmin.Font = New-Object Drawing.Font("Segoe UI",8)
 $lblAdmin.Location = New-Object Drawing.Point(158,18)
@@ -191,8 +191,8 @@ $form.Controls.Add($lblAdmin)
 
 # Unified Settings Panel (Theme + Language)
 $pnlSettings = New-Object Windows.Forms.Panel
-$pnlSettings.Location = New-Object Drawing.Point(540,8)
-$pnlSettings.Size = New-Object Drawing.Size(110,28)
+$pnlSettings.Location = New-Object Drawing.Point(535,8)
+$pnlSettings.Size = New-Object Drawing.Size(125,28)
 $pnlSettings.BackColor = $script:Dark.Panel
 $form.Controls.Add($pnlSettings)
 
@@ -201,16 +201,16 @@ $lblTheme = New-Object Windows.Forms.Label
 $lblTheme.Text = [char]0x263C  # Sun symbol
 $lblTheme.Font = New-Object Drawing.Font("Segoe UI Symbol",14)
 $lblTheme.Size = New-Object Drawing.Size(26,24)
-$lblTheme.Location = New-Object Drawing.Point(4,2)
-$lblTheme.BackColor = $script:Dark.Panel  # Match panel background
+$lblTheme.Location = New-Object Drawing.Point(2,2)
+$lblTheme.BackColor = [Drawing.Color]::Transparent  # Transparent background
 $lblTheme.ForeColor = [Drawing.Color]::Gold
 $lblTheme.TextAlign = "MiddleCenter"
 $lblTheme.Cursor = "Hand"
 $pnlSettings.Controls.Add($lblTheme)
 
 $cmbLang = New-Object Windows.Forms.ComboBox
-$cmbLang.Location = New-Object Drawing.Point(34,3)
-$cmbLang.Size = New-Object Drawing.Size(70,22)
+$cmbLang.Location = New-Object Drawing.Point(32,3)
+$cmbLang.Size = New-Object Drawing.Size(85,22)
 $cmbLang.DropDownStyle = "DropDownList"
 $cmbLang.BackColor = $script:Dark.Btn
 $cmbLang.ForeColor = $script:Dark.Text
@@ -229,7 +229,7 @@ $pnlStatus.Anchor = "Top,Left,Right"
 $form.Controls.Add($pnlStatus)
 
 $lblStatusTitle = New-Object Windows.Forms.Label
-$lblStatusTitle.Text = "Current DNS Status"
+$lblStatusTitle.Text = ""  # Set by UpdateLang
 $lblStatusTitle.Font = New-Object Drawing.Font("Segoe UI",10,[Drawing.FontStyle]::Bold)
 $lblStatusTitle.ForeColor = $script:Dark.Text
 $lblStatusTitle.Location = New-Object Drawing.Point(10,6)
@@ -247,7 +247,7 @@ $pnlStatus.Controls.Add($lblStatus)
 
 #region Adapter Selection
 $lblAdapter = New-Object Windows.Forms.Label
-$lblAdapter.Text = "Network Adapter:"
+$lblAdapter.Text = ""  # Set by UpdateLang
 $lblAdapter.ForeColor = $script:Dark.Text
 $lblAdapter.Location = New-Object Drawing.Point(20,138)
 $lblAdapter.AutoSize = $true
@@ -263,9 +263,9 @@ $cmbAdapter.FlatStyle = "Standard"
 $form.Controls.Add($cmbAdapter)
 
 $btnRefresh = New-Object Windows.Forms.Button
-$btnRefresh.Text = "Refresh"
+$btnRefresh.Text = ""  # Set by UpdateLang
 $btnRefresh.Size = New-Object Drawing.Size(70,24)
-$btnRefresh.Location = New-Object Drawing.Point(560,135)
+$btnRefresh.Location = New-Object Drawing.Point(575,135)  # Aligned with adapter combobox end
 $btnRefresh.BackColor = $script:Dark.Btn
 $btnRefresh.ForeColor = $script:Dark.Text
 $btnRefresh.FlatStyle = "Flat"
@@ -281,7 +281,7 @@ $pnlDNS.BackColor = $script:Dark.Panel
 $form.Controls.Add($pnlDNS)
 
 $lblDNSTitle = New-Object Windows.Forms.Label
-$lblDNSTitle.Text = "Select DNS Provider"
+$lblDNSTitle.Text = ""  # Set by UpdateLang
 $lblDNSTitle.Font = New-Object Drawing.Font("Segoe UI",10,[Drawing.FontStyle]::Bold)
 $lblDNSTitle.ForeColor = $script:Dark.Text
 $lblDNSTitle.Location = New-Object Drawing.Point(10,6)
@@ -320,10 +320,10 @@ $cmbDNS.SelectedIndex = 0
 $pnlDNS.Controls.Add($cmbDNS)
 
 $chkIPv6 = New-Object Windows.Forms.CheckBox
-$chkIPv6.Text = "IPv6"
+$chkIPv6.Text = ""  # Set by UpdateLang
 $chkIPv6.ForeColor = $script:Dark.Text
 $chkIPv6.Location = New-Object Drawing.Point(200,32)
-$chkIPv6.Size = New-Object Drawing.Size(70,22)
+$chkIPv6.Size = New-Object Drawing.Size(60,22)
 $chkIPv6.Checked = $true
 $pnlDNS.Controls.Add($chkIPv6)
 
@@ -332,7 +332,7 @@ $lblIPv4.Text = "IPv4:"
 $lblIPv4.ForeColor = [Drawing.Color]::LightGray
 $lblIPv4.Font = New-Object Drawing.Font("Consolas",9)
 $lblIPv4.Location = New-Object Drawing.Point(10,60)
-$lblIPv4.Size = New-Object Drawing.Size(400,16)
+$lblIPv4.Size = New-Object Drawing.Size(320,16)
 $pnlDNS.Controls.Add($lblIPv4)
 
 $lblIPv6 = New-Object Windows.Forms.Label
@@ -340,12 +340,12 @@ $lblIPv6.Text = "IPv6:"
 $lblIPv6.ForeColor = [Drawing.Color]::LightGray
 $lblIPv6.Font = New-Object Drawing.Font("Consolas",9)
 $lblIPv6.Location = New-Object Drawing.Point(10,78)
-$lblIPv6.Size = New-Object Drawing.Size(600,16)
+$lblIPv6.Size = New-Object Drawing.Size(320,16)
 $pnlDNS.Controls.Add($lblIPv6)
 
 # Action Buttons Row
 $btnApply = New-Object Windows.Forms.Button
-$btnApply.Text = "Apply DNS"
+$btnApply.Text = ""  # Set by UpdateLang
 $btnApply.Size = New-Object Drawing.Size(100,30)
 $btnApply.Location = New-Object Drawing.Point(10,108)
 $btnApply.BackColor = [Drawing.Color]::FromArgb(0,130,100)
@@ -356,7 +356,7 @@ $btnApply.Font = New-Object Drawing.Font("Segoe UI",9,[Drawing.FontStyle]::Bold)
 $pnlDNS.Controls.Add($btnApply)
 
 $btnReset = New-Object Windows.Forms.Button
-$btnReset.Text = "Reset DHCP"
+$btnReset.Text = ""  # Set by UpdateLang
 $btnReset.Size = New-Object Drawing.Size(100,30)
 $btnReset.Location = New-Object Drawing.Point(115,108)
 $btnReset.BackColor = [Drawing.Color]::FromArgb(80,80,80)
@@ -375,38 +375,19 @@ $btnBenchmark.FlatStyle = "Flat"
 $btnBenchmark.FlatAppearance.BorderSize = 0
 $pnlDNS.Controls.Add($btnBenchmark)
 
-# Domain Check - multiline TextBox on right side (same style as Log)
-$script:DefaultDomains = "google.com`r`ncloudflare.com`r`nyoutube.com`r`nfacebook.com`r`nmicrosoft.com"
+# Domain Check - multiline TextBox at bottom-right corner of DNS Panel
+$script:DefaultDomains = "google.com`r`nx.com`r`nyoutube.com`r`nfacebook.com`r`ntiktok.com"
 $txtDomains = New-Object Windows.Forms.TextBox
 $txtDomains.Text = $script:DefaultDomains
-$txtDomains.Location = New-Object Drawing.Point(330,30)
-$txtDomains.Size = New-Object Drawing.Size(180,75)
+$txtDomains.Location = New-Object Drawing.Point(440,60)
+$txtDomains.Size = New-Object Drawing.Size(175,78)
 $txtDomains.Multiline = $true
 $txtDomains.ScrollBars = "Vertical"
 $txtDomains.BackColor = $script:Dark.LogBg
 $txtDomains.ForeColor = $script:Dark.LogText
-$txtDomains.Font = New-Object Drawing.Font("Consolas",8.5)
+$txtDomains.Font = New-Object Drawing.Font("Consolas",8)
 $txtDomains.BorderStyle = "FixedSingle"
 $pnlDNS.Controls.Add($txtDomains)
-
-$lblDomains = New-Object Windows.Forms.Label
-$lblDomains.Text = "Test Domains"
-$lblDomains.Font = New-Object Drawing.Font("Segoe UI",8)
-$lblDomains.ForeColor = [Drawing.Color]::FromArgb(120,120,120)
-$lblDomains.Location = New-Object Drawing.Point(330,108)
-$lblDomains.AutoSize = $true
-$pnlDNS.Controls.Add($lblDomains)
-
-$btnResetDomains = New-Object Windows.Forms.Button
-$btnResetDomains.Text = "Reset"
-$btnResetDomains.Size = New-Object Drawing.Size(50,22)
-$btnResetDomains.Location = New-Object Drawing.Point(460,106)
-$btnResetDomains.BackColor = $script:Dark.Btn
-$btnResetDomains.ForeColor = $script:Dark.Text
-$btnResetDomains.FlatStyle = "Flat"
-$btnResetDomains.FlatAppearance.BorderColor = [Drawing.Color]::FromArgb(70,70,70)
-$btnResetDomains.Font = New-Object Drawing.Font("Segoe UI",7)
-$pnlDNS.Controls.Add($btnResetDomains)
 #endregion
 
 #region Tools Panel
@@ -417,7 +398,7 @@ $pnlTools.BackColor = $script:Dark.Panel
 $form.Controls.Add($pnlTools)
 
 $btnFlush = New-Object Windows.Forms.Button
-$btnFlush.Text = "Flush DNS"
+$btnFlush.Text = ""  # Set by UpdateLang
 $btnFlush.Size = New-Object Drawing.Size(85,28)
 $btnFlush.Location = New-Object Drawing.Point(8,6)
 $btnFlush.BackColor = $script:Dark.Btn
@@ -427,7 +408,7 @@ $btnFlush.FlatAppearance.BorderColor = [Drawing.Color]::FromArgb(70,70,70)
 $pnlTools.Controls.Add($btnFlush)
 
 $btnNetwork = New-Object Windows.Forms.Button
-$btnNetwork.Text = "Network"
+$btnNetwork.Text = ""  # Set by UpdateLang
 $btnNetwork.Size = New-Object Drawing.Size(75,28)
 $btnNetwork.Location = New-Object Drawing.Point(98,6)
 $btnNetwork.BackColor = $script:Dark.Btn
@@ -437,7 +418,7 @@ $btnNetwork.FlatAppearance.BorderColor = [Drawing.Color]::FromArgb(70,70,70)
 $pnlTools.Controls.Add($btnNetwork)
 
 $btnCheckPing = New-Object Windows.Forms.Button
-$btnCheckPing.Text = "Check Ping"
+$btnCheckPing.Text = ""  # Set by UpdateLang
 $btnCheckPing.Size = New-Object Drawing.Size(85,28)
 $btnCheckPing.Location = New-Object Drawing.Point(178,6)
 $btnCheckPing.BackColor = $script:Dark.Btn
@@ -447,7 +428,7 @@ $btnCheckPing.FlatAppearance.BorderColor = [Drawing.Color]::FromArgb(70,70,70)
 $pnlTools.Controls.Add($btnCheckPing)
 
 $btnSpeed = New-Object Windows.Forms.Button
-$btnSpeed.Text = "Speed Test"
+$btnSpeed.Text = ""  # Set by UpdateLang
 $btnSpeed.Size = New-Object Drawing.Size(85,28)
 $btnSpeed.Location = New-Object Drawing.Point(268,6)
 $btnSpeed.BackColor = [Drawing.Color]::FromArgb(0,130,100)  # Teal - Primary
@@ -465,7 +446,7 @@ $pnlLog.BackColor = $script:Dark.Panel
 $form.Controls.Add($pnlLog)
 
 $lblLogTitle = New-Object Windows.Forms.Label
-$lblLogTitle.Text = "Log"
+$lblLogTitle.Text = ""  # Set by UpdateLang
 $lblLogTitle.Font = New-Object Drawing.Font("Segoe UI",9,[Drawing.FontStyle]::Bold)
 $lblLogTitle.ForeColor = $script:Dark.Text
 $lblLogTitle.Location = New-Object Drawing.Point(8,5)
@@ -473,7 +454,7 @@ $lblLogTitle.AutoSize = $true
 $pnlLog.Controls.Add($lblLogTitle)
 
 $btnClear = New-Object Windows.Forms.Button
-$btnClear.Text = "Clear"
+$btnClear.Text = ""  # Set by UpdateLang
 $btnClear.Size = New-Object Drawing.Size(55,22)
 $btnClear.Location = New-Object Drawing.Point(560,3)
 $btnClear.BackColor = [Drawing.Color]::FromArgb(90,50,50)
@@ -606,9 +587,8 @@ function ApplyTheme {
     $btnFlush.BackColor = $t.Btn; $btnFlush.ForeColor = $t.Text
     $btnNetwork.BackColor = $t.Btn; $btnNetwork.ForeColor = $t.Text
     $btnCheckPing.BackColor = $t.Btn; $btnCheckPing.ForeColor = $t.Text
-    $btnResetDomains.BackColor = $t.Btn; $btnResetDomains.ForeColor = $t.Text
     # Theme icon
-    $lblTheme.BackColor = $t.Panel  # Match panel bg
+    $lblTheme.BackColor = [Drawing.Color]::Transparent  # Transparent
     $lblTheme.Text = if($script:IsDarkTheme){[char]0x263C}else{[char]0x263E}  # Sun or Moon
     $lblTheme.ForeColor = if($script:IsDarkTheme){[Drawing.Color]::Gold}else{[Drawing.Color]::LightSlateGray}
     $lblIPv4.ForeColor = if($script:IsDarkTheme){[Drawing.Color]::LightGray}else{[Drawing.Color]::DimGray}
@@ -620,11 +600,11 @@ function UpdateLang {
     $lblAdmin.Text = T 'Admin'; $lblStatusTitle.Text = T 'CurrentStatus'
     $lblAdapter.Text = T 'NetworkAdapter'; $btnRefresh.Text = T 'Refresh'
     $lblDNSTitle.Text = T 'SelectDNS'; $btnApply.Text = T 'ApplyDNS'
-    $btnReset.Text = T 'ResetDHCP'; $btnBenchmark.Text = T 'BenchmarkAll'
+    $btnReset.Text = T 'ResetDHCP'
     $btnFlush.Text = T 'FlushCache'; $btnNetwork.Text = T 'NetworkSettings'
     $btnCheckPing.Text = T 'CheckPing'; $btnSpeed.Text = T 'SpeedTest'
     $lblLogTitle.Text = T 'Log'; $btnClear.Text = T 'Clear'
-    $lblAuthor.Text = T 'Author'; $chkIPv6.Text = T 'AlsoIPv6'
+    $chkIPv6.Text = "IPv6"
     UpdateNetStatus  # Update Internet/NoInternet text
 }
 #endregion
@@ -653,7 +633,6 @@ $btnClear.Add_Click({ $txtLog.Clear() })
 $lnkGitHub.Add_Click({ Start-Process "https://github.com/anhhackta" })
 $btnNetwork.Add_Click({ Start-Process "ncpa.cpl" })
 $btnFlush.Add_Click({ Clear-DnsClientCache; Log "[OK] $(T 'LogFlushed')" })
-$btnResetDomains.Add_Click({ $txtDomains.Text = $script:DefaultDomains })
 
 # Copy only IP to clipboard when clicked
 $lblPCIP.Add_Click({
@@ -720,11 +699,12 @@ $btnCheckPing.Add_Click({
 })
 
 $btnBenchmark.Add_Click({
+    # Use domains from textbox (same as Check Ping)
+    $testDomains = $txtDomains.Text -split "`r`n|`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ }
+    if(-not $testDomains -or $testDomains.Count -eq 0){ Log "[$(T 'LogError')] No domains configured"; return }
+    
     Log "$(T 'LogBenchmark') [DNS Query - Multi-Domain]"
     Log ("-"*60)
-    
-    # Test domains - popular sites
-    $testDomains = @("google.com", "youtube.com", "facebook.com", "tiktok.com", "x.com", "cloudflare.com", "steampowered.com")
     $timeout = 3000  # 3 seconds timeout per DNS
     
     Log "Testing $($script:DNSPresets.Count) DNS servers with $($testDomains.Count) domains each..."
