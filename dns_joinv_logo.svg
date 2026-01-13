@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <defs>
+    <linearGradient id="gradientGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00b878;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00d4aa;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="gradientBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0078D4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#50E6FF;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Central Circle (DNS Core) -->
+  <circle cx="100" cy="90" r="40" fill="url(#gradientGreen)" filter="url(#shadow)"/>
+  
+  <!-- DNS Globe Symbol -->
+  <circle cx="100" cy="90" r="35" fill="none" stroke="white" stroke-width="1.5" opacity="0.4"/>
+  <ellipse cx="100" cy="90" rx="35" ry="15" fill="none" stroke="white" stroke-width="1" opacity="0.3"/>
+  <line x1="100" y1="55" x2="100" y2="125" stroke="white" stroke-width="1" opacity="0.3"/>
+  
+  <!-- Connection dots around globe -->
+  <circle cx="100" cy="55" r="4" fill="white"/>
+  <circle cx="135" cy="90" r="4" fill="white"/>
+  <circle cx="100" cy="125" r="4" fill="white"/>
+  <circle cx="65" cy="90" r="4" fill="white"/>
+  
+  <!-- Timer/Latency indicator (bottom right) -->
+  <g transform="translate(130, 115)">
+    <circle cx="0" cy="0" r="22" fill="url(#gradientBlue)" filter="url(#shadow)"/>
+    <circle cx="0" cy="0" r="18" fill="none" stroke="white" stroke-width="1.5" opacity="0.6"/>
+    <!-- Clock hands -->
+    <line x1="0" y1="0" x2="0" y2="-10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <line x1="0" y1="0" x2="8" y2="4" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="0" r="2" fill="white"/>
+    <!-- ms text -->
+    <text x="0" y="25" font-family="Arial, sans-serif" font-size="8" font-weight="bold" text-anchor="middle" fill="#50E6FF">ms</text>
+  </g>
+
+  <!-- Outer connection nodes (representing network) -->
+  <circle cx="50" cy="55" r="6" fill="#00d4aa" opacity="0.8"/>
+  <line x1="58" y1="62" x2="70" y2="72" stroke="#00b878" stroke-width="1.5" opacity="0.6"/>
+  
+  <circle cx="150" cy="55" r="6" fill="#00d4aa" opacity="0.8"/>
+  <line x1="142" y1="62" x2="130" y2="72" stroke="#00b878" stroke-width="1.5" opacity="0.6"/>
+  
+  <circle cx="50" cy="130" r="6" fill="#00d4aa" opacity="0.8"/>
+  <line x1="58" y1="123" x2="72" y2="112" stroke="#00b878" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Text Label -->
+  <text x="100" y="170" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#00b878">DNS JoinV</text>
+  
+  <!-- Version mark -->
+  <text x="100" y="188" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#00d4aa" opacity="0.8">v1.1</text>
+</svg>
