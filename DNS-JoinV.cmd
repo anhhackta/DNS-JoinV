@@ -125,6 +125,18 @@ function Test-InternetConnection {
         return ($r.Status -eq 'Success')
     } catch { return $false }
 }
+
+function Get-CleanDomain {
+    param([string]$Input)
+    $d = $Input.Trim()
+    # Remove protocol (http://, https://, ftp://, etc.)
+    if($d -match '^[a-z]+://') { $d = $d -replace '^[a-z]+://', '' }
+    # Remove path, query string, port
+    $d = $d -split '[/:?#]' | Select-Object -First 1
+    # Remove www. prefix
+    $d = $d -replace '^www\.', ''
+    return $d
+}
 #endregion
 
 #region Theme Colors
@@ -191,9 +203,9 @@ $form.Controls.Add($lblAdmin)
 
 # Unified Settings Panel (Theme + Language)
 $pnlSettings = New-Object Windows.Forms.Panel
-$pnlSettings.Location = New-Object Drawing.Point(535,8)
+$pnlSettings.Location = New-Object Drawing.Point(520,8)
 $pnlSettings.Size = New-Object Drawing.Size(125,28)
-$pnlSettings.BackColor = $script:Dark.Panel
+$pnlSettings.BackColor = [Drawing.Color]::Transparent
 $form.Controls.Add($pnlSettings)
 
 # Theme Icon (Label-based for cleaner look)
@@ -202,8 +214,8 @@ $lblTheme.Text = [char]0x263C  # Sun symbol
 $lblTheme.Font = New-Object Drawing.Font("Segoe UI Symbol",14)
 $lblTheme.Size = New-Object Drawing.Size(26,24)
 $lblTheme.Location = New-Object Drawing.Point(2,2)
-$lblTheme.BackColor = [Drawing.Color]::Transparent  # Transparent background
-$lblTheme.ForeColor = [Drawing.Color]::Gold
+$lblTheme.BackColor = [Drawing.Color]::Transparent
+$lblTheme.ForeColor = [Drawing.Color]::White
 $lblTheme.TextAlign = "MiddleCenter"
 $lblTheme.Cursor = "Hand"
 $pnlSettings.Controls.Add($lblTheme)
@@ -326,6 +338,25 @@ $chkIPv6.Location = New-Object Drawing.Point(200,32)
 $chkIPv6.Size = New-Object Drawing.Size(60,22)
 $chkIPv6.Checked = $true
 $pnlDNS.Controls.Add($chkIPv6)
+
+# Benchmark Mode Selection - Radio Buttons
+$rdoDNSLatency = New-Object Windows.Forms.RadioButton
+$rdoDNSLatency.Text = "DNS Latency"
+$rdoDNSLatency.ForeColor = [Drawing.Color]::FromArgb(180,180,180)
+$rdoDNSLatency.Location = New-Object Drawing.Point(270,32)
+$rdoDNSLatency.Size = New-Object Drawing.Size(100,22)
+$rdoDNSLatency.Checked = $true
+$rdoDNSLatency.Font = New-Object Drawing.Font("Segoe UI",8)
+$pnlDNS.Controls.Add($rdoDNSLatency)
+
+$rdoICMPPing = New-Object Windows.Forms.RadioButton
+$rdoICMPPing.Text = "ICMP Ping"
+$rdoICMPPing.ForeColor = [Drawing.Color]::FromArgb(180,180,180)
+$rdoICMPPing.Location = New-Object Drawing.Point(375,32)
+$rdoICMPPing.Size = New-Object Drawing.Size(90,22)
+$rdoICMPPing.Checked = $false
+$rdoICMPPing.Font = New-Object Drawing.Font("Segoe UI",8)
+$pnlDNS.Controls.Add($rdoICMPPing)
 
 $lblIPv4 = New-Object Windows.Forms.Label
 $lblIPv4.Text = "IPv4:"
@@ -578,6 +609,8 @@ function ApplyTheme {
     $lblTitle.ForeColor = $t.Accent; $lblStatusTitle.ForeColor = $t.Text
     $lblDNSTitle.ForeColor = $t.Text; $lblLogTitle.ForeColor = $t.Text
     $lblAdapter.ForeColor = $t.Text; $chkIPv6.ForeColor = $t.Text
+    $rdoDNSLatency.ForeColor = if($script:IsDarkTheme){[Drawing.Color]::FromArgb(180,180,180)}else{[Drawing.Color]::FromArgb(80,80,80)}
+    $rdoICMPPing.ForeColor = if($script:IsDarkTheme){[Drawing.Color]::FromArgb(180,180,180)}else{[Drawing.Color]::FromArgb(80,80,80)}
     $lblStatus.ForeColor = $t.Status; $txtLog.BackColor = $t.LogBg; $txtLog.ForeColor = $t.LogText
     $txtDomains.BackColor = $t.LogBg; $txtDomains.ForeColor = $t.LogText
     $cmbAdapter.BackColor = $t.Btn; $cmbAdapter.ForeColor = $t.Text
@@ -587,10 +620,10 @@ function ApplyTheme {
     $btnFlush.BackColor = $t.Btn; $btnFlush.ForeColor = $t.Text
     $btnNetwork.BackColor = $t.Btn; $btnNetwork.ForeColor = $t.Text
     $btnCheckPing.BackColor = $t.Btn; $btnCheckPing.ForeColor = $t.Text
-    # Theme icon
-    $lblTheme.BackColor = [Drawing.Color]::Transparent  # Transparent
+    # Theme icon - white/black to blend with background
+    $lblTheme.BackColor = [Drawing.Color]::Transparent
     $lblTheme.Text = if($script:IsDarkTheme){[char]0x263C}else{[char]0x263E}  # Sun or Moon
-    $lblTheme.ForeColor = if($script:IsDarkTheme){[Drawing.Color]::Gold}else{[Drawing.Color]::LightSlateGray}
+    $lblTheme.ForeColor = if($script:IsDarkTheme){[Drawing.Color]::White}else{[Drawing.Color]::Black}
     $lblIPv4.ForeColor = if($script:IsDarkTheme){[Drawing.Color]::LightGray}else{[Drawing.Color]::DimGray}
     $lblIPv6.ForeColor = if($script:IsDarkTheme){[Drawing.Color]::LightGray}else{[Drawing.Color]::DimGray}
     $lnkGitHub.LinkColor = $t.Accent
@@ -665,8 +698,8 @@ $btnReset.Add_Click({
 })
 
 $btnCheckPing.Add_Click({
-    # Use domains from multiline TextBox (split by newlines)
-    $domains = $txtDomains.Text -split "`r`n|`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ }
+    # Use domains from multiline TextBox (split by newlines) and clean URLs
+    $domains = $txtDomains.Text -split "`r`n|`n" | ForEach-Object { Get-CleanDomain $_ } | Where-Object { $_ }
     if(-not $domains){ Log "[$(T 'LogError')] No domains configured"; return }
     
     Log "Checking DNS resolve for $($domains.Count) domains..."
@@ -699,11 +732,19 @@ $btnCheckPing.Add_Click({
 })
 
 $btnBenchmark.Add_Click({
-    # Use domains from textbox (same as Check Ping)
-    $testDomains = $txtDomains.Text -split "`r`n|`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ }
+    # Use domains from textbox (same as Check Ping) and clean URLs
+    $testDomains = $txtDomains.Text -split "`r`n|`n" | ForEach-Object { 
+        $d = $_.Trim()
+        if($d -match '^[a-z]+://') { $d = $d -replace '^[a-z]+://', '' }
+        $d = $d -split '[/:?#]' | Select-Object -First 1
+        $d -replace '^www\.', ''
+    } | Where-Object { $_ }
     if(-not $testDomains -or $testDomains.Count -eq 0){ Log "[$(T 'LogError')] No domains configured"; return }
     
-    Log "$(T 'LogBenchmark') [DNS Query - Multi-Domain]"
+    $useICMP = $rdoICMPPing.Checked
+    $modeText = if($useICMP){"ICMP Ping"}else{"DNS Latency"}
+    
+    Log "$(T 'LogBenchmark') [$modeText - Multi-Domain]"
     Log ("-"*60)
     $timeout = 3000  # 3 seconds timeout per DNS
     
@@ -717,7 +758,12 @@ $btnBenchmark.Add_Click({
         $dnsIP = $p.Value.IPv4[0]
         
         $job = Start-Job -ScriptBlock {
-            param($Name, $IP, $Domains, $Timeout)
+            param($Name, $IP, $Domains, $Timeout, $UseICMP)
+            
+            # Warmup - first query is always slower due to connection setup
+            if(-not $UseICMP){
+                try { $null = Resolve-DnsName -Name "google.com" -Server $IP -Type A -DnsOnly -EA Stop } catch {}
+            }
             
             $domainResults = @()
             $successCount = 0
@@ -725,18 +771,46 @@ $btnBenchmark.Add_Click({
             
             foreach($domain in $Domains){
                 try {
-                    $sw = [Diagnostics.Stopwatch]::StartNew()
-                    $result = Resolve-DnsName -Name $domain -Server $IP -Type A -DnsOnly -EA Stop
-                    $sw.Stop()
-                    $latency = $sw.ElapsedMilliseconds
-                    
-                    $domainResults += [PSCustomObject]@{
-                        Domain = $domain
-                        Latency = $latency
-                        Success = $true
+                    if($UseICMP){
+                        # ICMP Ping mode - resolve domain first, then ping the IP
+                        $resolved = Resolve-DnsName -Name $domain -Server $IP -Type A -DnsOnly -EA Stop | Select-Object -First 1
+                        if($resolved -and $resolved.IPAddress){
+                            $ping = New-Object System.Net.NetworkInformation.Ping
+                            $sw = [Diagnostics.Stopwatch]::StartNew()
+                            $reply = $ping.Send($resolved.IPAddress, $Timeout)
+                            $sw.Stop()
+                            $ping.Dispose()
+                            
+                            if($reply.Status -eq 'Success'){
+                                $latency = $reply.RoundtripTime
+                                $domainResults += [PSCustomObject]@{
+                                    Domain = $domain
+                                    Latency = $latency
+                                    Success = $true
+                                }
+                                $successCount++
+                                $totalLatency += $latency
+                            } else {
+                                throw "Ping failed"
+                            }
+                        } else {
+                            throw "DNS resolve failed"
+                        }
+                    } else {
+                        # DNS Query mode - measure DNS resolution time
+                        $sw = [Diagnostics.Stopwatch]::StartNew()
+                        $result = Resolve-DnsName -Name $domain -Server $IP -Type A -DnsOnly -EA Stop
+                        $sw.Stop()
+                        $latency = $sw.ElapsedMilliseconds
+                        
+                        $domainResults += [PSCustomObject]@{
+                            Domain = $domain
+                            Latency = $latency
+                            Success = $true
+                        }
+                        $successCount++
+                        $totalLatency += $latency
                     }
-                    $successCount++
-                    $totalLatency += $latency
                 } catch {
                     $domainResults += [PSCustomObject]@{
                         Domain = $domain
@@ -755,7 +829,7 @@ $btnBenchmark.Add_Click({
                 SuccessRate = "$successCount/$($Domains.Count)"
                 DomainResults = $domainResults
             }
-        } -ArgumentList $dnsName, $dnsIP, $testDomains, $timeout
+        } -ArgumentList $dnsName, $dnsIP, $testDomains, $timeout, $useICMP
         
         $jobs += @{Name=$dnsName; Job=$job}
     }
@@ -783,12 +857,22 @@ $btnBenchmark.Add_Click({
     # Sort by average latency ascending
     $sortedResults = $allResults | Sort-Object AvgLatency
     
-    # Display results
+    # Display results with per-domain ping details (short format)
     foreach($r in $sortedResults){
+        # Build domain ping string (just latency values)
+        $domainPings = @()
+        if($r.DomainResults -and $r.DomainResults.Count -gt 0){
+            foreach($dr in $r.DomainResults){
+                if($dr.Success){ $domainPings += "$($dr.Latency)" }
+                else { $domainPings += "fail" }
+            }
+        }
+        $pingStr = if($domainPings.Count -gt 0){ " | " + ($domainPings -join " | ") }else{ "" }
+        
         if($r.AvgLatency -lt 9999){
-            Log "$($r.Name.PadRight(16)) $($r.AvgLatency.ToString().PadLeft(6)) ms  [$($r.SuccessRate)]"
+            Log "$($r.Name.PadRight(14)) $($r.AvgLatency.ToString().PadLeft(5)) ms [$($r.SuccessRate)]$pingStr"
         } else {
-            Log "$($r.Name.PadRight(16)) $(T 'LogFailed')  [$($r.SuccessRate)]"
+            Log "$($r.Name.PadRight(14)) FAIL   [$($r.SuccessRate)]$pingStr"
         }
     }
     
