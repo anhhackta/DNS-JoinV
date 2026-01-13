@@ -12,6 +12,16 @@
   </a>
 </p>
 
+<p align="center">
+<a href="https://github.com/anhhackta/DNS-JoinV/blob/main/README.vi.md">
+    <img src="https://hatscripts.github.io/circle-flags/flags/vn.svg" width="20">
+</a>
+  <!-- Keep these links. Translations will automatically update with the README. -->
+ <a href="https://github.com/anhhackta/DNS-JoinV/blob/main/README.md">
+    <img src="https://hatscripts.github.io/circle-flags/flags/us.svg" width="35">
+</a>
+</p>
+---
 > 🌐 **DNS JoinV — Công cụ quản lý DNS nhỏ gọn cho Windows**
 
 Một công cụ di động, nhẹ để thay đổi DNS nhanh chóng (tương tự DNS Jumper). Không cần cài đặt — chạy trực tiếp file `DNS-JoinV.cmd`.
