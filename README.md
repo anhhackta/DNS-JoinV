@@ -11,7 +11,16 @@
     <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
   </a>
 </p>
-
+<p align="center">
+<a href="https://github.com/anhhackta/DNS-JoinV/blob/main/README.vi.md">
+    <img src="https://hatscripts.github.io/circle-flags/flags/vn.svg" width="35">
+</a>
+  <!-- Keep these links. Translations will automatically update with the README. -->
+ <a href="https://github.com/anhhackta/DNS-JoinV/blob/main/README.md">
+    <img src="https://hatscripts.github.io/circle-flags/flags/us.svg" width="20">
+</a>
+</p>
+---
 > 🌐 **Simple DNS Management Tool for Windows** - Change DNS with one click!
 
 A lightweight, portable DNS management tool similar to DNS Jumper. No installation required - just run and use!
