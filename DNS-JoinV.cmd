@@ -891,24 +891,34 @@ $btnSpeed.Add_Click({
     Log "$(T 'LogSpeedTest')"
     try {
         $web = New-Object Net.WebClient
+        $web.Headers.Add("user-agent", "Mozilla/5.0")
+        
         # Download test
         Log "Testing download speed..."
         $s = Get-Date
-        $data = $web.DownloadData("https://speed.cloudflare.com/__down?bytes=10000000")
+        $data = $web.DownloadData("https://speed.cloudflare.com/__down?bytes=200000000")  # 200MB
         $sec = ((Get-Date)-$s).TotalSeconds
-        $dlMbps = ($data.Length * 8) / ($sec * 1000000)
-        Log "[Download] $([math]::Round($dlMbps,2)) Mbps"
+        $sizeMB = $data.Length / 1048576
+        $dlMBps = $sizeMB / $sec
+        $dlMbps = $dlMBps * 8
+        Log "[OK] [$([math]::Round($sizeMB,2)) MB in $([math]::Round($sec,2))s] [Download] $([math]::Round($dlMbps,2)) Mbps"
         
         # Upload test
         Log "Testing upload speed..."
-        $uploadData = New-Object byte[] 2000000  # 2MB
+        $uploadData = New-Object byte[] 20000000  # 20MB
         $s = Get-Date
         $response = $web.UploadData("https://speed.cloudflare.com/__up", $uploadData)
         $sec = ((Get-Date)-$s).TotalSeconds
-        $ulMbps = ($uploadData.Length * 8) / ($sec * 1000000)
-        Log "[Upload] $([math]::Round($ulMbps,2)) Mbps"
+        $ulMB = $uploadData.Length / 1048576
+        $ulMBps = $ulMB / $sec
+        $ulMbps = $ulMBps * 8
+        Log "[OK] [$([math]::Round($ulMB,2)) MB in $([math]::Round($sec,2))s] [Upload] $([math]::Round($ulMbps,2)) Mbps"
         
-        Log "[$(T 'LogSpeed')] DL: $([math]::Round($dlMbps,2)) / UL: $([math]::Round($ulMbps,2)) Mbps"
+        # Summary
+        Log "[$(T 'LogSpeed')] DL: $([math]::Round($dlMbps,2)) Mbps / UL: $([math]::Round($ulMbps,2)) Mbps"
+        Log "[Bandwidth] $([math]::Round($dlMbps/8,1)) MB/s"
+        
+        $web.Dispose()
     } catch { Log "[$(T 'LogError')] Speed test failed: $_" }
 })
 #endregion
