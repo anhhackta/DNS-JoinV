@@ -698,34 +698,76 @@ $btnReset.Add_Click({
 })
 
 $btnCheckPing.Add_Click({
-    # Use domains from multiline TextBox (split by newlines) and clean URLs
-    $domains = $txtDomains.Text -split "`r`n|`n" | ForEach-Object { Get-CleanDomain $_ } | Where-Object { $_ }
-    if(-not $domains){ Log "[$(T 'LogError')] No domains configured"; return }
+    # Get current DNS being used by the selected adapter
+    $idx = GetAdapterIndex
+    if(-not $idx){ Log "[$(T 'LogError')] $(T 'NoAdapter')"; return }
     
-    Log "Checking DNS resolve for $($domains.Count) domains..."
-    $totalMs = 0; $successCount = 0; $failCount = 0
+    $currentDNS = (Get-DnsClientServerAddress -InterfaceIndex $idx -AddressFamily IPv4 -EA 0).ServerAddresses | Select-Object -First 1
+    if(-not $currentDNS){ Log "[$(T 'LogError')] No DNS configured on adapter"; return }
     
-    foreach($domain in $domains){
+    # Get domains from textbox and clean URLs
+    $testDomains = $txtDomains.Text -split "`r`n|`n" | ForEach-Object { Get-CleanDomain $_ } | Where-Object { $_ }
+    if(-not $testDomains -or $testDomains.Count -eq 0){ 
+        $testDomains = @("google.com","x.com","youtube.com","facebook.com","tiktok.com")
+    }
+    
+    $dnsName = Get-DNSProviderName -IP $currentDNS
+    $useICMP = $rdoICMPPing.Checked
+    $modeText = if($useICMP){"ICMP Ping"}else{"DNS Latency"}
+    
+    Log "$(T 'LogPinging') [$modeText] using [$dnsName - $currentDNS]"
+    Log ("-"*60)
+    
+    # Warmup
+    if(-not $useICMP){
+        try { $null = Resolve-DnsName -Name "google.com" -Server $currentDNS -Type A -DnsOnly -EA Stop } catch {}
+    }
+    
+    $successCount = 0
+    $totalLatency = 0
+    
+    foreach($domain in $testDomains){
         [Windows.Forms.Application]::DoEvents()
         try {
-            $sw = [Diagnostics.Stopwatch]::StartNew()
-            $result = [Net.Dns]::GetHostAddresses($domain)
-            $sw.Stop()
-            $ms = $sw.ElapsedMilliseconds
-            $totalMs += $ms
-            $successCount++
-            Log "  [OK] $domain - $ms ms"
+            if($useICMP){
+                # ICMP Ping mode
+                $resolved = Resolve-DnsName -Name $domain -Server $currentDNS -Type A -DnsOnly -EA Stop | Select-Object -First 1
+                if($resolved -and $resolved.IPAddress){
+                    $ping = New-Object System.Net.NetworkInformation.Ping
+                    $reply = $ping.Send($resolved.IPAddress, 3000)
+                    $ping.Dispose()
+                    
+                    if($reply.Status -eq 'Success'){
+                        $latency = $reply.RoundtripTime
+                        Log "  [OK] $($domain.PadRight(18)) $latency ms"
+                        $successCount++
+                        $totalLatency += $latency
+                    } else {
+                        Log "  [FAIL] $($domain.PadRight(18)) Ping timeout"
+                    }
+                } else {
+                    Log "  [FAIL] $($domain.PadRight(18)) DNS resolve failed"
+                }
+            } else {
+                # DNS Latency mode
+                $sw = [Diagnostics.Stopwatch]::StartNew()
+                $result = Resolve-DnsName -Name $domain -Server $currentDNS -Type A -DnsOnly -EA Stop
+                $sw.Stop()
+                $latency = $sw.ElapsedMilliseconds
+                
+                Log "  [OK] $($domain.PadRight(18)) $latency ms"
+                $successCount++
+                $totalLatency += $latency
+            }
         } catch {
-            $failCount++
-            $errMsg = if($_.Exception.InnerException){ $_.Exception.InnerException.Message }else{ "DNS Fail" }
-            Log "  [FAIL] $domain - $errMsg"
+            Log "  [FAIL] $($domain.PadRight(18)) Error"
         }
     }
     
-    Log ("-"*40)
+    Log ("-"*60)
     if($successCount -gt 0){
-        $avg = [math]::Round($totalMs / $successCount, 1)
-        Log "[RESULT] Avg: $avg ms | OK: $successCount | Fail: $failCount"
+        $avg = [math]::Round($totalLatency / $successCount, 1)
+        Log "[RESULT] Avg: $avg ms | Success: $successCount/$($testDomains.Count)"
     } else {
         Log "[$(T 'LogFailed')] All domains failed"
     }
