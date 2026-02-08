@@ -930,38 +930,73 @@ $btnBenchmark.Add_Click({
 })
 
 $btnSpeed.Add_Click({
-    Log "$(T 'LogSpeedTest')"
+    # Helper to log without timestamp
+    function LogNoTime($msg){ $txtLog.AppendText("$msg`r`n"); $txtLog.ScrollToCaret() }
+    
+    Log "[Internet Speed] by Fast.com (Auto-selected)"
+    LogNoTime "---------------------------------------------"
+    
     try {
-        $web = New-Object Net.WebClient
-        $web.Headers.Add("user-agent", "Mozilla/5.0")
+        # Check Node.js
+        if(-not (Get-Command node -EA SilentlyContinue)){
+            Log "[ERROR] Node.js required! Install from nodejs.org"
+            return
+        }
         
-        # Download test
-        Log "Testing download speed..."
-        $s = Get-Date
-        $data = $web.DownloadData("https://speed.cloudflare.com/__down?bytes=200000000")  # 200MB
-        $sec = ((Get-Date)-$s).TotalSeconds
-        $sizeMB = $data.Length / 1048576
-        $dlMBps = $sizeMB / $sec
-        $dlMbps = $dlMBps * 8
-        Log "[OK] [$([math]::Round($sizeMB,2)) MB in $([math]::Round($sec,2))s] [Download] $([math]::Round($dlMbps,2)) Mbps"
+        # Check/Install fast-cli
+        if(-not (Get-Command fast -EA SilentlyContinue)){
+            Log "Installing fast-cli..."
+            $null = npm install -g fast-cli 2>&1
+        }
         
-        # Upload test
-        Log "Testing upload speed..."
-        $uploadData = New-Object byte[] 20000000  # 20MB
-        $s = Get-Date
-        $response = $web.UploadData("https://speed.cloudflare.com/__up", $uploadData)
-        $sec = ((Get-Date)-$s).TotalSeconds
-        $ulMB = $uploadData.Length / 1048576
-        $ulMBps = $ulMB / $sec
-        $ulMbps = $ulMBps * 8
-        Log "[OK] [$([math]::Round($ulMB,2)) MB in $([math]::Round($sec,2))s] [Upload] $([math]::Round($ulMbps,2)) Mbps"
+        # Get client info (use region to avoid diacritics issues)
+        $clientInfo = "Vietnam"
+        try {
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            $ipInfo = (New-Object Net.WebClient).DownloadString("https://ipinfo.io/json") | ConvertFrom-Json
+            $clientInfo = "$($ipInfo.region), $($ipInfo.country) - $($ipInfo.org)"
+        } catch {}
         
-        # Summary
-        Log "[$(T 'LogSpeed')] DL: $([math]::Round($dlMbps,2)) Mbps / UL: $([math]::Round($ulMbps,2)) Mbps"
-        Log "[Bandwidth] $([math]::Round($dlMbps/8,1)) MB/s"
+        # Ping test
+        $ping = New-Object System.Net.NetworkInformation.Ping
+        $r = $ping.Send("8.8.8.8", 2000)
+        $latency = if($r.Status -eq 'Success'){ $r.RoundtripTime } else { 0 }
+        $ping.Dispose()
         
-        $web.Dispose()
-    } catch { Log "[$(T 'LogError')] Speed test failed: $_" }
+        # Show testing message
+        Log "Testing... please wait"
+        [Windows.Forms.Application]::DoEvents()
+        
+        # Run fast-cli with async to prevent freeze
+        $psi = New-Object Diagnostics.ProcessStartInfo
+        $psi.FileName = "cmd.exe"
+        $psi.Arguments = "/c fast"
+        $psi.UseShellExecute = $false
+        $psi.RedirectStandardOutput = $true
+        $psi.CreateNoWindow = $true
+        $proc = [Diagnostics.Process]::Start($psi)
+        
+        # Keep UI responsive while waiting
+        while(-not $proc.HasExited){
+            [Windows.Forms.Application]::DoEvents()
+            Start-Sleep -Milliseconds 100
+        }
+        $result = $proc.StandardOutput.ReadToEnd()
+        $proc.Dispose()
+        
+        # Parse speed
+        $speed = 0
+        if($result -match "(\d+)\s*Mbps"){ $speed = [int]$matches[1] }
+        
+        # Show results
+        LogNoTime "[Client] $clientInfo"
+        LogNoTime "[Ping] $latency ms"
+        LogNoTime "[Speed] $speed Mbps ($([math]::Round($speed/8,1)) MB/s)"
+        LogNoTime "---------------------------------------------"
+        
+    } catch {
+        Log "[ERROR] Speed test failed: $_"
+    }
 })
 #endregion
 
@@ -969,7 +1004,7 @@ $btnSpeed.Add_Click({
 RefreshStatus
 UpdateDNSInfo
 ApplyTheme
-UpdateLang  # Apply language strings at startup
+UpdateLang
 Log "$(T 'LogStarted')"
 [Windows.Forms.Application]::Run($form)
 #endregion
